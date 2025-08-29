@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import React from "react";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import WorkoutLog from "./components/WorkoutLog";
+import WorkoutHistory from "./components/WorkoutHistory";
+import ProgressChart from "./components/ProgressChart";
+
+export default function App() {
+  const [workouts, setWorkouts] = useLocalStorage("fit_workouts_v1", []);
+
+  function addWorkout(w) {
+    setWorkouts(prev => [w, ...prev]);
+  }
+
+  function deleteWorkout(id) {
+    if (!confirm("Delete this workout?")) return;
+    setWorkouts(prev => prev.filter(p => p.id !== id));
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="max-w-4xl mx-auto p-4 space-y-6">
+      <h1 className="text-3xl font-bold text-center">Fitness Tracker</h1>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div><WorkoutLog onSave={addWorkout} /></div>
+        <div className="space-y-4">
+          <ProgressChart workouts={workouts} />
+          <WorkoutHistory workouts={workouts} onDelete={deleteWorkout} />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
-
-export default App
