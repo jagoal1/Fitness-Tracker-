@@ -1,35 +1,48 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 
-export default function Exercises() {
-  const [exercises, setExercises] = useState([]);
-  const [search, setSearch] = useState("");
+const Exercises = () => {
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    axios.get("https://wger.de/api/v2/exercise/?language=2&limit=20")
-      .then(res => setExercises(res.data.results))
-      .catch(() => alert("Error fetching exercises"));
-  }, []);
+  const exercises = [
+    { name: "Push Up", bodyPart: "Chest" },
+    { name: "Squat", bodyPart: "Legs" },
+    { name: "Plank", bodyPart: "Core" },
+    { name: "Burpee", bodyPart: "Full Body" },
+    // 👇 make sure all have `name` defined
+  ];
 
-  const filtered = exercises.filter(ex =>
-    ex.name.toLowerCase().includes(search.toLowerCase())
+  const filteredExercises = exercises.filter(exercise =>
+    exercise?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Exercise Library</h1>
-      <input className="border p-2 mb-4"
-        placeholder="Search exercise..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)} />
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Exercise Library</h2>
+      <input
+        type="text"
+        placeholder="Search exercises..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="border px-3 py-2 rounded mb-6 w-full"
+      />
 
-      <ul>
-        {filtered.length > 0 ? filtered.map((ex) => (
-          <li key={ex.id} className="border-b py-2">
-            <strong>{ex.name}</strong> – {ex.description ? ex.description.replace(/<[^>]+>/g, '') : "No description"}
-          </li>
-        )) : <p>No exercises found.</p>}
+      <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {filteredExercises.length > 0 ? (
+          filteredExercises.map((exercise, index) => (
+            <li
+              key={index}
+              className="p-4 bg-white shadow rounded-lg border hover:shadow-lg transition"
+            >
+              <h3 className="text-lg font-semibold">{exercise.name}</h3>
+              <p className="text-gray-600">{exercise.bodyPart}</p>
+            </li>
+          ))
+        ) : (
+          <p className="text-gray-500">No exercises found.</p>
+        )}
       </ul>
     </div>
   );
-}
+};
+
+export default Exercises;
