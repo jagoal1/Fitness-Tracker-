@@ -17,5 +17,3 @@ It allows users to:
 - UUID + date-fns (helpers)
 
 ---
-
-## 📂 Project Structure
